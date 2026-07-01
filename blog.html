@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog &middot; Anif N. Shikder</title>
+<style>
+  :root{
+    --ink:#101820; --paper:#f3efe6; --paper-2:#e9e3d6;
+    --wave-deep:#1d3b5c; --wave-mid:#3f73a6; --wave-crest:#cdbf9a;
+    --signal:#c8552b; --signal-2:#e0a23c;
+    --line:rgba(16,24,32,.14); --line-strong:rgba(16,24,32,.3); --mut:#5d6670;
+    --sidebar:300px; --maxw:720px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    font-size:18px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:var(--signal);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+  strong{font-weight:600}
+  .layout{display:flex;min-height:100vh}
+  .sidebar{width:var(--sidebar);flex-shrink:0;position:sticky;top:0;height:100vh;
+    background:var(--ink);color:var(--paper);display:flex;flex-direction:column;overflow:hidden;border-right:1px solid #000}
+  .sb-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.5}
+  .sb-inner{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;
+    padding:34px 28px;background:linear-gradient(to bottom,rgba(16,24,32,.35),rgba(16,24,32,.86) 60%,rgba(16,24,32,.95))}
+  .sb-name{font-size:27px;line-height:1.05;font-weight:600;letter-spacing:-.01em;margin:0}
+  .sb-name a{color:var(--paper);text-decoration:none}
+  .sb-role{margin:12px 0 0;font-size:14px;color:rgba(243,239,230,.78);line-height:1.4}
+  .sb-role b{color:var(--wave-crest);font-weight:600}
+  .sb-sec{margin-top:26px}
+  .sb-h{font-family:"SF Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--signal-2);margin:0 0 10px;font-weight:600}
+  .sb-nav a{display:block;color:rgba(243,239,230,.9);text-decoration:none;font-size:16px;padding:5px 0;border-bottom:1px solid rgba(243,239,230,.08);transition:color .12s,padding-left .12s}
+  .sb-nav a:hover{color:var(--signal-2);padding-left:5px}
+  .sb-nav a.active{color:var(--wave-crest)}
+  .sb-social{display:flex;flex-wrap:wrap;gap:8px}
+  .sb-social a{font-family:"SF Mono",ui-monospace,monospace;font-size:12px;color:rgba(243,239,230,.85);text-decoration:none;border:1px solid rgba(243,239,230,.18);border-radius:999px;padding:5px 11px;transition:border-color .12s,color .12s}
+  .sb-social a:hover{border-color:var(--signal-2);color:var(--signal-2)}
+  .sb-foot{margin-top:auto;padding-top:22px;font-size:11px;color:rgba(243,239,230,.4);font-family:"SF Mono",ui-monospace,monospace}
+  .main{flex:1;min-width:0;display:flex;justify-content:center}
+  .col{width:100%;max-width:var(--maxw);padding:56px 34px 90px}
+  h1.page{font-size:clamp(28px,4vw,40px);line-height:1.05;margin:0 0 8px;font-weight:600;letter-spacing:-.01em}
+  .note{color:var(--mut);font-size:15px;margin:0 0 30px}
+  .post{padding:0 0 38px;margin:0 0 38px;border-bottom:1px solid var(--line)}
+  .post:last-child{border-bottom:none}
+  .post h2{font-size:clamp(23px,3.2vw,30px);line-height:1.12;margin:0 0 8px;font-weight:600;letter-spacing:-.01em}
+  .post h2 a{color:var(--ink);text-decoration:none}
+  .post h2 a:hover{color:var(--signal)}
+  .post h2 em{font-style:italic;color:var(--wave-deep)}
+  .post .when{font-family:"SF Mono",ui-monospace,monospace;font-size:12.5px;color:var(--mut);margin:0 0 14px;letter-spacing:.03em}
+  .post .teaser{height:130px;width:100%;border-radius:10px;display:block;background:var(--ink);margin:0 0 14px}
+  .post .summary{margin:0 0 14px;font-size:17px;line-height:1.55;color:#28323c}
+  .post .summary b{font-weight:600;color:var(--ink)}
+  .post .cont{font-family:"SF Mono",ui-monospace,monospace;font-size:13px;color:var(--signal);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:7px}
+  .post .cont:hover{gap:11px}
+  @media (max-width:860px){
+    .layout{flex-direction:column}
+    .sidebar{position:relative;width:100%;height:auto}
+    .sb-inner{padding:26px 24px}
+    .sb-canvas{opacity:.4}
+    .col{padding:40px 24px 70px}
+  }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <canvas class="sb-canvas" id="sbCanvas"></canvas>
+    <div class="sb-inner">
+      <p class="sb-name"><a href="index.html">Anif N. Shikder</a></p>
+      <p class="sb-role">PhD Candidate, Applied Mathematics<br><b>Muller Lab</b>, Western University &amp; the <b>Fields Institute</b></p>
+      <div class="sb-sec">
+        <p class="sb-h">Navigation</p>
+        <nav class="sb-nav">
+          <a href="index.html">About Me</a>
+          <!-- a href="talks.html">Invited Talks</a -->
+          <a href="publications.html">Publications</a>
+          <!-- a href="blog.html" class="active">Blog</a -->
+          <a href="cv.html">CV</a>
+        </nav>
+      </div>
+      <div class="sb-sec">
+        <p class="sb-h">Elsewhere</p>
+        <div class="sb-social">
+          <a href="mailto:anifnaiyeershikder@gmail.com">Email</a>
+          <a href="https://github.com/anifshikder">GitHub</a>
+          <a href="https://scholar.google.ca/citations?view_op=list_works&hl=en&user=JeP0K_wAAAAJ">Scholar</a>
+          <a href="https://www.linkedin.com/in/anifshikder/">LinkedIn</a>
+        </div>
+      </div>
+      <p class="sb-foot">&copy; 2026 Anif N. Shikder</p>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="col">
+      <h1 class="page">Blog</h1>
+      <p class="note">Writing and interactive explainers.</p>
+
+<!--
+
+      <article class="post">
+        <h2><a href="cvnn-blog.html">Remembering by <em>walking</em> the network</a></h2>
+        <p class="when">Associative memory &middot; interactive</p>
+        <span class="teaser" data-mode="mem"></span>
+        <p class="summary">Memories are stored as <b>degenerate eigenmodes</b>, and recall becomes a complex-walk filtration that rebuilds occluded images through phase-coherent interference &mdash; with <b>no spurious states by construction</b>. Completes MNIST digits at ~90% occlusion where a modern Hopfield network holds to ~65%.</p>
+        <a class="cont" href="cvnn-blog.html">Continue reading &rarr;</a>
+      </article>
+
+      <article class="post">
+        <h2><a href="traveling-waves-ssm_3.html">The hidden <em>waves</em> inside sequence models</a></h2>
+        <p class="when">Sequence models &middot; interactive</p>
+        <span class="teaser" data-mode="wave"></span>
+        <p class="summary">A formal correspondence shows a diagonal state-space model (S4D) is the <b>same system as a ring of oscillators</b>, computing by traveling waves. A Carleman embedding of the nonlinearity then yields an exact end-to-end operator, with single waves and pairs explaining <b>~94%</b> of real-task performance.</p>
+        <a class="cont" href="traveling-waves-ssm_3.html">Continue reading &rarr;</a>
+      </article>
+
+      <article class="post">
+        <h2><a href="s1-blog.html">The sequence model you can <em>solve on paper</em></a></h2>
+        <p class="when">Interpretability &middot; interactive</p>
+        <span class="teaser" data-mode="s1"></span>
+        <p class="summary">S&sup1; derives its nonlinear readout from the linearizing transformation itself, so the whole forward pass is <b>one closed-form operator</b> parameterized by the eigenvalues and eigenvectors of K. Competitive on benchmarks, and <b>steerable</b>: nudging a few modes flips a decision on purpose.</p>
+        <a class="cont" href="s1-blog.html">Continue reading &rarr;</a>
+      </article>
+
+    </div>
+  </div>
+</div>
+<script>
+"use strict";
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function phaseColor(p){const t=(p+Math.PI)/(2*Math.PI);const s=[[29,59,92],[63,115,166],[205,191,154],[63,115,166],[29,59,92]];const seg=t*(s.length-1),i=Math.floor(seg),f=seg-i,a=s[i],b=s[Math.min(i+1,s.length-1)];return 'rgb('+Math.round(a[0]+(b[0]-a[0])*f)+','+Math.round(a[1]+(b[1]-a[1])*f)+','+Math.round(a[2]+(b[2]-a[2])*f)+')';}
+function fitCanvas(c,cssH){const dpr=Math.min(window.devicePixelRatio||1,2),w=c.clientWidth||300,hh=cssH||c.clientHeight||300;c.width=w*dpr;c.height=hh*dpr;const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return {ctx,w,h:hh};}
+(function(){const c=document.getElementById('sbCanvas');if(!c)return;let dim=fitCanvas(c,c.clientHeight||700);const ctx=dim.ctx;window.addEventListener('resize',function(){dim=fitCanvas(c,c.clientHeight||700);});let t=0;function frame(){const W=dim.w,H=dim.h;ctx.clearRect(0,0,W,H);const cols=26,rows=80,cw=W/cols,ch=H/rows;for(let yi=0;yi<rows;yi++)for(let xi=0;xi<cols;xi++){const y=yi/rows;const ph=Math.sin(2*Math.PI*2*y-t*0.7+xi*0.18)+0.5*Math.sin(2*Math.PI*4*y+t*0.4);ctx.fillStyle=phaseColor(Math.atan2(Math.sin(ph),Math.cos(ph)));ctx.fillRect(xi*cw,yi*ch,cw+1,ch+1);}if(!reduceMotion){t+=0.025;requestAnimationFrame(frame);}}frame();})();
+function paintTeaser(el){const mode=el.dataset.mode;const c=document.createElement('canvas');c.style.width='100%';c.style.height='130px';c.style.display='block';c.style.borderRadius='10px';el.appendChild(c);let dim=fitCanvas(c,130);let ctx=dim.ctx;window.addEventListener('resize',function(){dim=fitCanvas(c,130);ctx=dim.ctx;});let t=Math.random()*8;function frame(){const W=dim.w,H=dim.h;ctx.clearRect(0,0,W,H);const cols=140,rows=16,cw=W/cols,ch=H/rows;for(let yi=0;yi<rows;yi++)for(let xi=0;xi<cols;xi++){const x=xi/cols;let ph;if(mode==='mem'){ph=Math.sin(2*Math.PI*1.2*(yi/rows)+1.5*x-0.3*Math.sin(t*0.4));}else if(mode==='wave'){ph=Math.sin(2*Math.PI*3*x-t*1.0+yi*0.12)+0.5*Math.sin(2*Math.PI*5*x-t*1.4);}else{ph=Math.sin(2*Math.PI*4*x-t*1.2+yi*0.18)+0.6*Math.sin(2*Math.PI*7*x-t*0.8);}ctx.fillStyle=phaseColor(Math.atan2(Math.sin(ph),Math.cos(ph)));ctx.fillRect(xi*cw,yi*ch,cw+1,ch+1);}if(!reduceMotion){t+=0.03;requestAnimationFrame(frame);}}frame();}
+document.querySelectorAll('.teaser').forEach(paintTeaser);
+</script>
+-->
+</body>
+</html>
