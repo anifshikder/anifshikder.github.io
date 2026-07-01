@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://anifshikder.github.io/sitemap.xml
